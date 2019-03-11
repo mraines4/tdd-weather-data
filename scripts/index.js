@@ -1,4 +1,5 @@
 
+
 // Implement the following functions to fulfill the tests!
 function getLocationName(obj) {
     return obj.name;
@@ -50,7 +51,7 @@ try {
 
 const weatherDiv = document.querySelector('[data-weather]');
 
-const url = 'http://openweathermap.org/img/w/11d.png'
+// const iconUrl = 'http://openweathermap.org/img/w/11d.png'
 
 function getIcon(obj) {
     return obj.weather[0].icon;
@@ -62,18 +63,14 @@ function weatherPic (get) {
     return imgTag;
 }
 
-weatherDiv.append(weatherPic(getIcon(atlWeather)))
 
 const cityName = document.createElement('p');
-cityName.textContent = `City: ${getLocationName(atlWeather)}`;
 weatherDiv.append(cityName);
 
 const temperature = document.createElement('p');
-temperature.textContent = `Temperature: ${getTemperature(atlWeather)}℉`;
 weatherDiv.append(temperature);
 
 const windSpeed = document.createElement('p');
-windSpeed.textContent = `Windspeed: ${getWindSpeed(atlWeather)}`;
 weatherDiv.append(windSpeed);
 
 
@@ -93,20 +90,18 @@ function convertTime(unix_timestamp) {
     let minutes = "0" + date.getMinutes();
     // Seconds part from the timestamp
     let seconds = "0" + date.getSeconds();
-
+    
     // Will display time in 10:30:23 format
     let formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-
+    
     return formattedTime
 }
 
 
 const sunrise = document.createElement('p');
-sunrise.textContent = `Sunrise: ${convertTime(getSunrise(atlWeather))}`;
 weatherDiv.append(sunrise);
 
 const sunset = document.createElement('p');
-sunset.textContent = `Sunset: ${convertTime(getSunset(atlWeather))}`;
 weatherDiv.append(sunset);
 
 const map = document.createElement('iframe');
@@ -114,5 +109,23 @@ map.setAttribute('width', '100%');
 map.setAttribute('height', 450);
 map.setAttribute('frameborder', 0);
 map.setAttribute('style', 'border:0');
-map.setAttribute('src', `http://maps.google.com/maps?q=${getLocationLatitude(atlWeather)}, ${getLocationLongitude(atlWeather)}&z=15&output=embed`);
 weatherDiv.append(map);
+
+let theWeather;
+const url = 'https://api.openweathermap.org/data/2.5/weather?q=dallas,us&units=imperial&appid=1efd23d575e7f6ab1b69c24ba772d747';
+fetch(url)
+.then(function(response) { 
+    return response.json() 
+})
+.then(function(weatherData) { 
+    console.log(weatherData);
+    theWeather = weatherData;
+    weatherDiv.append(weatherPic(getIcon(theWeather)))
+    cityName.textContent = `City: ${getLocationName(theWeather)}`;
+    temperature.textContent = `Temperature: ${getTemperature(theWeather)}℉`;
+    windSpeed.textContent = `Windspeed: ${getWindSpeed(theWeather)}`;
+    sunrise.textContent = `Sunrise: ${convertTime(getSunrise(theWeather))}`;
+    sunset.textContent = `Sunset: ${convertTime(getSunset(theWeather))}`;
+    map.setAttribute('src', `http://maps.google.com/maps?q=${getLocationLatitude(theWeather)}, ${getLocationLongitude(theWeather)}&z=15&output=embed`);
+});
+
